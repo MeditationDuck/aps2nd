@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <cmath>
 
 using namespace std;
 
@@ -57,7 +58,7 @@ void convolution(const string& in_file){
         ifs.close();
         ofs.close();
         cout << "magic number error" << endl;
-        cout << file_header.magic[0] << " " << file_header.magic[1] << endl;
+        // cout << file_header.magic[0] << " " << file_header.magic[1] << endl;
         return;
     }
 
@@ -84,20 +85,22 @@ void convolution(const string& in_file){
     }
     ifs.get();// one caracter '\n'
 
-    ofs << file_header.width << " " << file_header.height << "\n" << max << "\n";
+    ofs << file_header.width << "\n" << file_header.height << "\n" << max << "\n";
 
-    cout <<"Header:" << endl;
-    cout << "Width: " <<file_header.width << endl;
-    cout << "Height: " << file_header.height << endl;
-    cout << "Max: " << max << endl;
+    // cout <<"Header:" << endl;
+    // cout << "Width: " <<file_header.width << endl;
+    // cout << "Height: " << file_header.height << endl;
+    // cout << "Max: " << max << endl;
 
     file_size -= ifs.tellg();
 
+    int pixcel_color_count = file_header.width * file_header.height* 3;
+    
 
 
-    uint8_t* piccel = new uint8_t[file_size];
-    int16_t* piccel2 = new int16_t[file_size];
-    ifs.read((char*)piccel, file_size);
+    uint8_t* piccel = new uint8_t[pixcel_color_count];
+    int16_t* piccel2 = new int16_t[pixcel_color_count];
+    ifs.read((char*)piccel, pixcel_color_count* sizeof(uint8_t));
     if(!ifs){
         ifs.close();
         ofs.close();
@@ -178,25 +181,55 @@ void convolution(const string& in_file){
         }
     }
     
+    int count_50 = 0;
+    int count_101 = 0;
+    int count_152 = 0;
+    int count_203 = 0;
+    int count_255 = 0;
 
-    uint8_t* res = new uint8_t[file_size];
-    for(int i = 0; i < file_size; i++){
-        if(piccel2[i] > 255){
-            piccel2[i] = 255;
+    uint8_t* res = new uint8_t[pixcel_color_count];
+    for(int i = 0; i < pixcel_color_count/3; i++){
+        for(int c = 0; c < 3; c++){
+             if(piccel2[i*3 + c] > 255){
+                piccel2[i*3 + c] = 255;
+            }
+            else if(piccel2[i*3 + c] < 0){
+                piccel2[i*3 + c] = 0;
+            }
+            res[i*3 + c] = piccel2[i*3 + c];
         }
-        else if(piccel2[i] < 0){
-            piccel2[i] = 0;
+
+        double color = 0.2126*res[i*3] + 0.7152*res[i*3+1] + 0.0722*res[i*3+2];
+
+        int roundedColor = static_cast<int>(std::round(color));
+
+        if(roundedColor <= 50){
+            count_50++;
         }
-        res[i] = piccel2[i];
+        else if(roundedColor <= 101){
+            count_101++;
+        }
+        else if(roundedColor <= 152){
+            count_152++;
+        }
+        else if(roundedColor <= 203){
+            count_203++;
+        }
+        else{
+            count_255++;
+        }
     }
+    ofstream text("out.txt");
+    text << count_50 << " " << count_101 << " " << count_152 << " " << count_203 << " " << count_255;
+    text.close();
 
-    ofs.write((char*)res, file_size);
-
+    ofs.write((char*)res, pixcel_color_count* sizeof(uint8_t));
     delete[] piccel;
     delete[] piccel2;
     delete[] res;
     ifs.close();
     ofs.close();
+
 }
 
 void see_file(const string& in_file)  {
@@ -240,8 +273,6 @@ void see_file(const string& in_file)  {
         return;
     }
 
-   
-
     if(max != 255){
         ifs.close();
         cout << "max value error" << endl;
@@ -263,7 +294,7 @@ void see_file(const string& in_file)  {
         cout << "piccel read error" << endl;
         return;
     }
-    
+
     for(int i = 0; i < file_header.height; i++){
         for(int j = 0; j < file_header.width; j++){
             for(int c = 0; c< 3; c++){
@@ -285,18 +316,18 @@ void see_file(const string& in_file)  {
 }
 
 
-int main(){
+// int main(){
 
-    see_file("test-10x8/test.ppm");
+//     see_file("test-10x8/test.ppm");
 
-    convolution("test-10x8/test.ppm");
-    see_file("out.ppm");
+//     convolution("test-10x8/test.ppm");
+//     see_file("out.ppm");
 
 
-    cout << "reference " << endl;
+//     cout << "reference " << endl;
 
-    see_file("test-10x8/output.ppm");
-}
+//     see_file("test-10x8/output.ppm");
+// }
 
 
 // int main(int argc, char** argv){
