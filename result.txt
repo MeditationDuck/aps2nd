@@ -1,0 +1,4 @@
+Just 1 array everything
+
+Convolution took 123 ms
+All tests passed!

@@ -1,0 +1,23 @@
+   for(int i = 1; i < file_header.height-1; i++){
+        for(int j = 1; j < file_header.width-1; j++){
+            for(int c = 0; c < 3; c++){
+                int16_t tmp = 0;
+                for(int row = -1; row <= 1; row++){
+                    for(int col = -1; col <= 1; col++){
+                        if(row != 0 && col != 0){
+                            continue;
+                        }
+                        uint mult = (row == 0 && col == 0) ? 5 : -1;
+
+                        if(row != 0){
+                            tmp += mult * (int16_t)row_adjecent[j*3 + c][i+row];
+                        }
+                        else {
+                            tmp += mult * (int16_t)col_adjecent[i][(j + col)*3 + c];
+                        }
+                    }
+                }
+                piccel2[(j + file_header.width* i)*3 + c] = tmp;
+            }
+        }
+    }

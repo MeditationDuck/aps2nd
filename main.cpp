@@ -2,24 +2,10 @@
 #include <fstream>
 #include <iomanip>
 #include <cmath>
+#include "struct.h"
 
 using namespace std;
 
-struct PPMFileHeader{
-    char magic[3];
-    int width;
-    int height;
-    int max;
-};
-
-struct PPMHeader{
-    int width;
-    int height;
-};
-
-struct PPMPiccel{
-    uint8_t r;
-};
 
 void convolution(const string& in_file){
     ifstream ifs(in_file, ios::binary);
@@ -28,37 +14,30 @@ void convolution(const string& in_file){
         if(!ifs){
             ifs.close();
         }
-        cout << "file open error" << endl;
         return ;
     }
 
-    ifs.seekg(0, std::ifstream::end);
-	long file_size = ifs.tellg();
-	ifs.seekg(0,std::ifstream::beg);
-
     PPMFileHeader file_header;
 
-    ifs.read((char*)&file_header, 3);
-    ofs.write((char*)&file_header, 3);
+    char magic[3];
+
+    ifs.read((char*)&magic, 3);
+    ofs.write((char*)&magic, 3);
     if(!ifs){
         ifs.close();
         ofs.close();
-        cout << "magic read error" << endl;
         return;
     }
 
     if(ofs.bad()){
         ifs.close();
         ofs.close();
-        cout << "magic write error" << endl;
         return;
     }
 
-    if(file_header.magic[0] != 'P' || file_header.magic[1] != '6'){
+    if(magic[0] != 'P' || magic[1] != '6'){
         ifs.close();
         ofs.close();
-        cout << "magic number error" << endl;
-        // cout << file_header.magic[0] << " " << file_header.magic[1] << endl;
         return;
     }
 
@@ -75,7 +54,6 @@ void convolution(const string& in_file){
         return;
     }
 
-   
 
     if(max != 255){
         ifs.close();
@@ -87,15 +65,8 @@ void convolution(const string& in_file){
 
     ofs << file_header.width << "\n" << file_header.height << "\n" << max << "\n";
 
-    // cout <<"Header:" << endl;
-    // cout << "Width: " <<file_header.width << endl;
-    // cout << "Height: " << file_header.height << endl;
-    // cout << "Max: " << max << endl;
-
-    file_size -= ifs.tellg();
 
     int pixcel_color_count = file_header.width * file_header.height* 3;
-    
 
 
     uint8_t* piccel = new uint8_t[pixcel_color_count];
@@ -112,8 +83,7 @@ void convolution(const string& in_file){
         for(int j = 1; j < file_header.width-1; j++){
             for(int c = 0; c < 3; c++){
                 int index = (j + file_header.width* i)*3 + c;
-                int16_t tmp = (int16_t)piccel[index] * (int16_t)5;
-                piccel2[(j + file_header.width* i)*3 + c] = tmp;
+                piccel2[index] = (int16_t)piccel[index] * (int16_t)5;
             }
         }
     }
@@ -157,35 +127,22 @@ void convolution(const string& in_file){
 
     for(int i = 0; i < file_header.height; i++){
         for(int c = 0; c< 3; c++){
-            int index = (0 + file_header.width* i)*3 + c;
+            int index = (file_header.width* i)*3 + c;
             piccel2[index] = piccel[index];
-            // cout << (uint16_t)piccel[index] << endl;
-        }
-    }
-    for(int i = 0; i < file_header.height; i++){
-        for(int c = 0; c< 3; c++){
-            int index = ((file_header.width-1) + file_header.width* i)*3 + c;
-            piccel2[index] = piccel[index];
+            int index1 = ((file_header.width-1) + file_header.width* i)*3 + c;
+            piccel2[index1] = piccel[index1];
         }
     }
     for(int j = 0; j < file_header.width; j++){
         for(int c = 0; c< 3; c++){
-            int index = (j + file_header.width* 0)*3 + c;
+            int index = (j)*3 + c;
             piccel2[index] = piccel[index];
-        }
-    }
-    for(int j = 0; j < file_header.width; j++){
-        for(int c = 0; c< 3; c++){
-            int index = (j + file_header.width* (file_header.height-1))*3 + c;
-            piccel2[index] = piccel[index];
+            int index2 = (j + file_header.width* (file_header.height-1))*3 + c;
+            piccel2[index2] = piccel[index2];
         }
     }
     
-    int count_50 = 0;
-    int count_101 = 0;
-    int count_152 = 0;
-    int count_203 = 0;
-    int count_255 = 0;
+    int counts[5] = {0, 0, 0, 0, 0};
 
     uint8_t* res = new uint8_t[pixcel_color_count];
     for(int i = 0; i < pixcel_color_count/3; i++){
@@ -199,28 +156,26 @@ void convolution(const string& in_file){
             res[i*3 + c] = piccel2[i*3 + c];
         }
 
-        double color = 0.2126*res[i*3] + 0.7152*res[i*3+1] + 0.0722*res[i*3+2];
-
-        int roundedColor = static_cast<int>(std::round(color));
-
+        float color = 0.2126*res[i*3] + 0.7152*res[i*3+1] + 0.0722*res[i*3+2];
+        uint8_t roundedColor = (uint8_t)std::round(color);
         if(roundedColor <= 50){
-            count_50++;
+            counts[0]++;
         }
         else if(roundedColor <= 101){
-            count_101++;
+            counts[1]++;
         }
         else if(roundedColor <= 152){
-            count_152++;
+            counts[2]++;
         }
         else if(roundedColor <= 203){
-            count_203++;
+            counts[3]++;
         }
         else{
-            count_255++;
+            counts[4]++;
         }
     }
     ofstream text("out.txt");
-    text << count_50 << " " << count_101 << " " << count_152 << " " << count_203 << " " << count_255;
+    text << counts[0] << " " << counts[1] << " " << counts[2] << " " << counts[3] << " " << counts[4];
     text.close();
 
     ofs.write((char*)res, pixcel_color_count* sizeof(uint8_t));
@@ -242,23 +197,19 @@ void see_file(const string& in_file)  {
         return ;
     }
 
-    ifs.seekg(0, std::ifstream::end);
-	long file_size = ifs.tellg();
-	ifs.seekg(0,std::ifstream::beg);
-
     PPMFileHeader file_header;
+    char magic[3];
 
-    ifs.read((char*)&file_header, 3);
+    ifs.read((char*)&magic, 3);
     if(!ifs){
         ifs.close();
         cout << "magic read error" << endl;
         return;
     }
 
-    if(file_header.magic[0] != 'P' || file_header.magic[1] != '6'){
+    if(magic[0] != 'P' || magic[1] != '6'){
         ifs.close();
         cout << "magic number error" << endl;
-        cout << file_header.magic[0] << " " << file_header.magic[1] << endl;
         return;
     }
 
@@ -285,9 +236,9 @@ void see_file(const string& in_file)  {
     cout << "Height: " << file_header.height << endl;
     cout << "Max: " << max << endl;
 
-    file_size -= ifs.tellg();
+    int file_size = file_header.width * file_header.height* 3;
 
-    PPMPiccel* piccel = new PPMPiccel[file_size];
+    uint8_t* piccel = new uint8_t[file_size];
     ifs.read((char*)piccel, file_size);
     if(!ifs){
         ifs.close();
@@ -307,7 +258,7 @@ void see_file(const string& in_file)  {
                 else if(c == 2){
                     cout << "B: ";
                 }
-                cout << setfill('0') << setw(4) << (int)piccel[(j + file_header.width* i)*3 + c].r << " ";
+                cout << setfill('0') << setw(4) << (int)piccel[(j + file_header.width* i)*3 + c] << " ";
             }
         }
         cout << endl;
