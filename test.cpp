@@ -10,6 +10,7 @@
 #include <sstream> 
 #include <string>
 #include <chrono>
+#include "conv1.h"
 
 using namespace std;
 
@@ -86,8 +87,11 @@ int main(){
     // see_file("out.ppm");
    
     auto start = std::chrono::high_resolution_clock::now();
-    convolution("vit_small.ppm");
+    // convolution("vit_small.ppm");
+    convolution1("vit_small.ppm");
     auto stop = std::chrono::high_resolution_clock::now();
+
+
 
     // Calculate the duration
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
