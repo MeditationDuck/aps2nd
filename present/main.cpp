@@ -83,6 +83,9 @@ int main(int argc, char** argv){
     int counts[5] = {0, 0, 0, 0, 0};
 
     ifs.read((char*)piccel, pixcel_color_count* sizeof(uint8_t));
+
+    int totalSize = file_header.width * file_header.height * 3;
+    std::copy(piccel, piccel + totalSize, res);
     if(!ifs){
         ifs.close();
         ofs.close();
@@ -90,14 +93,15 @@ int main(int argc, char** argv){
         return 1;
     }
 
+
     for(int i = 1; i < file_header.height-1; i++){
         for(int j = 1; j < file_header.width-1; j++){
             for(int c = 0; c < 3; c++){
                 int index = (j + file_header.width* i)*3 + c;
                 int16_t tmp = 
-                    (int16_t)5* (int16_t)piccel[index] 
-                    -(int16_t)piccel[((j+1) + file_header.width* (i))*3 + c]
                     -(int16_t)piccel[((j-1) + file_header.width* (i))*3 + c]
+                    +(int16_t)5* (int16_t)piccel[index] 
+                    -(int16_t)piccel[((j+1) + file_header.width* (i))*3 + c]
                     -(int16_t)piccel[(j + file_header.width* (i-1))*3 + c]
                     -(int16_t)piccel[(j + file_header.width* (i+1))*3 + c];
                 if(tmp > 255){
@@ -112,22 +116,22 @@ int main(int argc, char** argv){
     }
  
 
-    for(int i = 0; i < file_header.height; i++){
-        for(int c = 0; c< 3; c++){
-            int index = (file_header.width* i)*3 + c;
-            res[index] = piccel[index];
-            int index1 = ((file_header.width-1) + file_header.width* i)*3 + c;
-            res[index1] = piccel[index1];
-        }
-    }
-    for(int j = 0; j < file_header.width; j++){
-        for(int c = 0; c< 3; c++){
-            int index = (j)*3 + c;
-            res[index] = piccel[index];
-            int index2 = (j + file_header.width* (file_header.height-1))*3 + c;
-            res[index2] = piccel[index2];
-        }
-    }
+    // for(int i = 0; i < file_header.height; i++){
+    //     for(int c = 0; c< 3; c++){
+    //         int index = (file_header.width* i)*3 + c;
+    //         res[index] = piccel[index];
+    //         int index1 = ((file_header.width-1) + file_header.width* i)*3 + c;
+    //         res[index1] = piccel[index1];
+    //     }
+    // }
+    // for(int j = 0; j < file_header.width; j++){
+    //     for(int c = 0; c< 3; c++){
+    //         int index = (j)*3 + c;
+    //         res[index] = piccel[index];
+    //         int index2 = (j + file_header.width* (file_header.height-1))*3 + c;
+    //         res[index2] = piccel[index2];
+    //     }
+    // }
   
     for(int i = 0; i < pixcel_color_count/3; i++){
         float color = 0.2126*res[i*3] + 0.7152*res[i*3+1] + 0.0722*res[i*3+2];

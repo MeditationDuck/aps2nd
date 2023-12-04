@@ -10,12 +10,12 @@ using namespace std;
 void convolution_dec_for4(const string& in_file){
     ifstream ifs(in_file, ios::binary);
     ofstream ofs("out.ppm", ios::binary);
-    if(!ifs || !ofs){
-        if(!ifs){
-            ifs.close();
-        }
-        return ;
-    }
+    // if(!ifs || !ofs){
+    //     if(!ifs){
+    //         ifs.close();
+    //     }
+    //     return ;
+    // }
 
     PPMFileHeader file_header;
 
@@ -23,23 +23,23 @@ void convolution_dec_for4(const string& in_file){
 
     ifs.read((char*)&magic, 3);
     ofs.write((char*)&magic, 3);
-    if(!ifs){
-        ifs.close();
-        ofs.close();
-        return;
-    }
+    // if(!ifs){
+    //     ifs.close();
+    //     ofs.close();
+    //     return;
+    // }
 
-    if(ofs.bad()){
-        ifs.close();
-        ofs.close();
-        return;
-    }
+    // if(ofs.bad()){
+    //     ifs.close();
+    //     ofs.close();
+    //     return;
+    // }
 
-    if(magic[0] != 'P' || magic[1] != '6'){
-        ifs.close();
-        ofs.close();
-        return;
-    }
+    // if(magic[0] != 'P' || magic[1] != '6'){
+    //     ifs.close();
+    //     ofs.close();
+    //     return;
+    // }
 
     string line;
     uint16_t max;
@@ -47,18 +47,19 @@ void convolution_dec_for4(const string& in_file){
         getline(ifs, line);
         ofs.write(line.c_str(), line.size());
     }
-    if(!(ifs >> file_header.width >> file_header.height >> max)){
-        ifs.close();
-        ofs.close();
-        cout << "header read error" << endl;
-        return;
-    }
-    if(max != 255){
-        ifs.close();
-        ofs.close();
-        cout << "max value error" << endl;
-        return;
-    }
+    ifs >> file_header.width >> file_header.height >> max;
+    // if(!(ifs >> file_header.width >> file_header.height >> max)){
+    //     ifs.close();
+    //     ofs.close();
+    //     cout << "header read error" << endl;
+    //     return;
+    // }
+    // if(max != 255){
+    //     ifs.close();
+    //     ofs.close();
+    //     cout << "max value error" << endl;
+    //     return;
+    // }
     ifs.get();
     ofs << file_header.width << "\n" << file_header.height << "\n" << max << "\n";
     
@@ -69,12 +70,12 @@ void convolution_dec_for4(const string& in_file){
     int counts[5] = {0, 0, 0, 0, 0};
 
     ifs.read((char*)piccel, pixcel_color_count* sizeof(uint8_t));
-    if(!ifs){
-        ifs.close();
-        ofs.close();
-        cout << "piccel read error" << endl;
-        return;
-    }
+    // if(!ifs){
+    //     ifs.close();
+    //     ofs.close();
+    //     cout << "piccel read error" << endl;
+    //     return;
+    // }
 
     for(int i = 1; i < file_header.height-1; i++){
         for(int j = 1; j < file_header.width-1; j++){

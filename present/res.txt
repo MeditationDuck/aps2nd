@@ -1,0 +1,37 @@
+==58120== Cachegrind, a cache and branch-prediction profiler
+==58120== Copyright (C) 2002-2017, and GNU GPL'd, by Nicholas Nethercote et al.
+==58120== Using Valgrind-3.19.0 and LibVEX; rerun with -h for copyright info
+==58120== Command: ./a.out ../vit_normal.ppm
+==58120== Parent PID: 58114
+==58120== 
+--58120-- warning: L3 cache found, using its data for the LL simulation.
+==58120== 
+==58120== Process terminating with default action of signal 2 (SIGINT)
+==58120==    at 0x4C5C83C: __pthread_once_slow (futex-internal.h:209)
+==58120==    by 0x49193EA: std::locale::facet::_S_get_c_locale() (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.32)
+==58120==    by 0x494101E: std::ctype<char>::ctype(unsigned short const*, bool, unsigned long) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.32)
+==58120==    by 0x491A189: std::locale::_Impl::_Impl(unsigned long) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.32)
+==58120==    by 0x491AF43: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.32)
+==58120==    by 0x491AFF6: std::locale::locale() (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.32)
+==58120==    by 0x4917DF1: std::ios_base::Init::Init() (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.32)
+==58120==    by 0x4902603: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.32)
+==58120==    by 0x400533D: call_init.part.0 (dl-init.c:70)
+==58120==    by 0x4005427: _dl_init (dl-init.c:33)
+==58120==    by 0x401CE0F: ??? (in /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+==58120==    by 0x1: ???
+==58120== 
+==58120== I   refs:      1,768,181
+==58120== I1  misses:        1,174
+==58120== LLi misses:        1,161
+==58120== I1  miss rate:      0.07%
+==58120== LLi miss rate:      0.07%
+==58120== 
+==58120== D   refs:        592,762  (448,551 rd   + 144,211 wr)
+==58120== D1  misses:       14,402  ( 12,432 rd   +   1,970 wr)
+==58120== LLd misses:        8,453  (  7,279 rd   +   1,174 wr)
+==58120== D1  miss rate:       2.4% (    2.8%     +     1.4%  )
+==58120== LLd miss rate:       1.4% (    1.6%     +     0.8%  )
+==58120== 
+==58120== LL refs:          15,576  ( 13,606 rd   +   1,970 wr)
+==58120== LL misses:         9,614  (  8,440 rd   +   1,174 wr)
+==58120== LL miss rate:        0.4% (    0.4%     +     0.8%  )

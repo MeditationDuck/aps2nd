@@ -16,6 +16,8 @@
 #include "decrease_for3.h"
 #include "decrease_for4.h"
 #include "decrease_for5.h"
+#include "increase_for6.h"
+#include "decrease_for7.h"
 
 using namespace std;
 
@@ -91,64 +93,64 @@ int main(){
 
     // see_file("out.ppm");
 
-    auto start = std::chrono::high_resolution_clock::now();
-    convolution("vit_small.ppm");
-    auto stop = std::chrono::high_resolution_clock::now();
+    // auto start = std::chrono::high_resolution_clock::now();
+    // convolution("vit_small.ppm");
+    // auto stop = std::chrono::high_resolution_clock::now();
 
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    std::cout << "Convolution took " << duration.count() << " ms" << std::endl;
+    // auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    // std::cout << "Convolution took " << duration.count() << " ms" << std::endl;
    
 
-    start = std::chrono::high_resolution_clock::now();
-    convolution1("vit_small.ppm");
-    stop = std::chrono::high_resolution_clock::now();
+    // start = std::chrono::high_resolution_clock::now();
+    // convolution1("vit_small.ppm");
+    // stop = std::chrono::high_resolution_clock::now();
 
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    std::cout << "Convolution took " << duration.count() << " ms" << std::endl;
+    // duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    // std::cout << "Convolution took " << duration.count() << " ms" << std::endl;
 
   
 
-    start = std::chrono::high_resolution_clock::now();
-    convolution_dec_for("vit_small.ppm");
-    stop = std::chrono::high_resolution_clock::now();
+    // start = std::chrono::high_resolution_clock::now();
+    // convolution_dec_for("vit_small.ppm");
+    // stop = std::chrono::high_resolution_clock::now();
 
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    std::cout << "Convolution took " << duration.count() << " ms" << std::endl;
+    // duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    // std::cout << "Convolution took " << duration.count() << " ms" << std::endl;
 
-    start = std::chrono::high_resolution_clock::now();
-    convolution_dec_for2("vit_small.ppm");
-    stop = std::chrono::high_resolution_clock::now();
+    // start = std::chrono::high_resolution_clock::now();
+    // convolution_dec_for2("vit_small.ppm");
+    // stop = std::chrono::high_resolution_clock::now();
 
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    std::cout << "convolution_dec_for2 took " << duration.count() << " ms" << std::endl;
+    // duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    // std::cout << "convolution_dec_for2 took " << duration.count() << " ms" << std::endl;
 
-    start = std::chrono::high_resolution_clock::now();
-    convolution_dec_for3("vit_small.ppm");
-    stop = std::chrono::high_resolution_clock::now();
+    // start = std::chrono::high_resolution_clock::now();
+    // convolution_dec_for3("vit_small.ppm");
+    // stop = std::chrono::high_resolution_clock::now();
 
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    std::cout << "convolution_dec_for3 took " << duration.count() << " ms" << std::endl;
+    // duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    // std::cout << "convolution_dec_for3 took " << duration.count() << " ms" << std::endl;
 
-    start = std::chrono::high_resolution_clock::now();
-    convolution_dec_for4("vit_small.ppm");
-    stop = std::chrono::high_resolution_clock::now();
+    // start = std::chrono::high_resolution_clock::now();
+    // convolution_dec_for4("vit_small.ppm");
+    // stop = std::chrono::high_resolution_clock::now();
 
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    std::cout << "convolution_dec_for4 took " << duration.count() << " ms" << std::endl;
+    // duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    // std::cout << "convolution_dec_for4 took " << duration.count() << " ms" << std::endl;
 
 
-    start = std::chrono::high_resolution_clock::now();
-    convolution_dec_for5("vit_small.ppm");
-    stop = std::chrono::high_resolution_clock::now();
+    auto start = std::chrono::high_resolution_clock::now();
+    convolution_dec_for7("vit_small.ppm");
+    auto stop = std::chrono::high_resolution_clock::now();
 
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    std::cout << "convolution_dec_for5 took " << duration.count() << " ms" << std::endl;
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    std::cout << "convolution_dec_for7 took " << duration.count() << " ms" << std::endl;
 
 
 
     bool output_result = true;
 
-    string hash = calculateMD5("out.ppm");
+    string hash = calculateMD5("output.ppm");
     if(hash == "32554ccd9b09af5b660a17b05350959b"){
         // cout << "Hash is correct!!!!!!!!!" << endl;
     }
@@ -156,14 +158,13 @@ int main(){
         cout << "Hash is incorrect!!!!!!!" << endl;
         output_result = false;
     }
-    if(testfile("out.txt", "24432 16307 15192 54597 9472")){
+    if(testfile("output.txt", "24432 16307 15192 54597 9472")){
         // cout << "File is correct!!!!!!!!!" << endl;
     }
     else{
         cout << "Text is incorrect!!!!!!!" << endl;
         output_result = false;
     }
-
 
 
 
@@ -194,19 +195,36 @@ int main(){
     // duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
     // std::cout << "Convolution took " << duration.count() << " ms" << std::endl;
 
+    // start = std::chrono::high_resolution_clock::now();
+    // convolution_dec_for2("vit_normal.ppm");
+    // stop = std::chrono::high_resolution_clock::now();
+
+    // duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    // std::cout << "convolution_dec_for2 took " << duration.count() << " ms" << std::endl;
+
+    // start = std::chrono::high_resolution_clock::now();
+    // convolution_dec_for3("vit_normal.ppm");
+    // stop = std::chrono::high_resolution_clock::now();
+
+    // duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    // std::cout << "convolution_dec_for3 took " << duration.count() << " ms" << std::endl;
+
+
     start = std::chrono::high_resolution_clock::now();
-    convolution_dec_for2("vit_normal.ppm");
+    convolution_dec_for5("vit_normal.ppm");
     stop = std::chrono::high_resolution_clock::now();
 
     duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    std::cout << "convolution_dec_for2 took " << duration.count() << " ms" << std::endl;
+    std::cout << "convolution_dec_for5 took " << duration.count() << " ms" << std::endl;
+
 
     start = std::chrono::high_resolution_clock::now();
-    convolution_dec_for3("vit_normal.ppm");
+    convolution_dec_for6("vit_normal.ppm");
     stop = std::chrono::high_resolution_clock::now();
 
     duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    std::cout << "convolution_dec_for3 took " << duration.count() << " ms" << std::endl;
+    std::cout << "convolution_dec_for6 took " << duration.count() << " ms" << std::endl;
+ 
 
     start = std::chrono::high_resolution_clock::now();
     convolution_dec_for4("vit_normal.ppm");
@@ -215,16 +233,14 @@ int main(){
     duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
     std::cout << "convolution_dec_for4 took " << duration.count() << " ms" << std::endl;
 
+
+
     start = std::chrono::high_resolution_clock::now();
-    convolution_dec_for5("vit_normal.ppm");
+    convolution_dec_for7("vit_normal.ppm");
     stop = std::chrono::high_resolution_clock::now();
 
     duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    std::cout << "convolution_dec_for5 took " << duration.count() << " ms" << std::endl;
- 
-
-
-
+    std::cout << "convolution_dec_for7 took " << duration.count() << " ms" << std::endl;
 
 
 
